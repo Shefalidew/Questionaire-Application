@@ -29,10 +29,21 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    //The object questions stores the text for the questions as well as their required answers
     var questions = [
-      "What's your favourite color?",
-      'What\s your favourite animal?'
-    ]; //list of questions
+      {
+        'questionText': "What's your favourite color?",
+        'answers': ['Black', 'White', 'Red', 'Blue', 'Green'],
+      },
+      {
+        'questionText': 'What\'s your favourite animal',
+        'answers': ['Bear', 'Zebra', 'Rabbit', 'Lion'],
+      },
+      {
+        'questionText': "What's your favourite flower?",
+        'answers': ['Jasmin', 'Rose', 'Lotus'],
+      },
+    ]; //list of maps
     // TODO: implement build
 
     return MaterialApp(
@@ -43,12 +54,13 @@ class _MyAppState extends State<MyApp> {
           foregroundColor: Colors.white,
         ),
         body: Column(
-          children: <Widget>[
-            Question(questions[_questionIndex]),
-            Answer(),
-            Answer(),
-            Answer(),
-            ],
+          children: [
+            Question(questions[_questionIndex]['questionText'] as String),
+            ...(questions[_questionIndex]['answers'] as List<String>)
+                .map((answer) {
+              return Answer(_answerQuestion, answer);
+            }).toList()
+          ],
         ),
       ),
     );
