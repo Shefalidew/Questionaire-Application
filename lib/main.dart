@@ -1,5 +1,6 @@
+import 'package:app3/result.dart';
 import 'package:flutter/material.dart';
-import './question.dart';
+import './quiz.dart';
 import './answer.dart';
 
 void main() {
@@ -16,34 +17,64 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final _questions = const [
+    {
+      'questionText': "What's your favourite color?",
+      'answers': [
+        {'text': 'Black', 'score': 10},
+        {'text': 'White', 'score': 1},
+        {'text': 'Red', 'score': 5},
+        {'text': 'Blue', 'score': 3},
+        {'text': 'Green', 'score': 1}
+      ],
+    },
+    {
+      'questionText': 'What\'s your favourite animal',
+      'answers': [
+        {'text': 'Bear', 'score': 7},
+        {'text': 'Zebra', 'score': 4},
+        {'text': 'Rabbit', 'score': 1},
+        {'text': 'Lion', 'score': 10}
+      ],
+    },
+    {
+      'questionText': "What's your favourite flower?",
+      'answers': [
+        {'text': 'Jasmin', 'score': 5},
+        {'text': 'Rose', 'score': 1},
+        {'text': 'Lotus', 'score': 10}
+      ],
+    },
+  ];
+
   //MyApp({Key? key}) : super(key: key);
+
   @override
   var _questionIndex = 0;
+  var _totalScore = 0;
 
-  void _answerQuestion() {
+  void _resetQuiz(){
+    setState(() {
+      _questionIndex = 0;
+      _totalScore = 0;
+    });
+  }
+
+  void _answerQuestion(int score) {
+    _totalScore += score;
     setState(() {
       _questionIndex = _questionIndex + 1;
     });
     print(_questionIndex);
+    if (_questionIndex < _questions.length) {
+      print('We have more questions');
+    } else {
+      print('No more questions');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    //The object questions stores the text for the questions as well as their required answers
-    var questions = [
-      {
-        'questionText': "What's your favourite color?",
-        'answers': ['Black', 'White', 'Red', 'Blue', 'Green'],
-      },
-      {
-        'questionText': 'What\'s your favourite animal',
-        'answers': ['Bear', 'Zebra', 'Rabbit', 'Lion'],
-      },
-      {
-        'questionText': "What's your favourite flower?",
-        'answers': ['Jasmin', 'Rose', 'Lotus'],
-      },
-    ]; //list of maps
     // TODO: implement build
 
     return MaterialApp(
@@ -53,15 +84,13 @@ class _MyAppState extends State<MyApp> {
           backgroundColor: Colors.brown[400],
           foregroundColor: Colors.white,
         ),
-        body: Column(
-          children: [
-            Question(questions[_questionIndex]['questionText'] as String),
-            ...(questions[_questionIndex]['answers'] as List<String>)
-                .map((answer) {
-              return Answer(_answerQuestion, answer);
-            }).toList()
-          ],
-        ),
+        body: _questionIndex < _questions.length
+            ? Quiz(
+                answerQuestion: _answerQuestion,
+                questionIndex: _questionIndex,
+                questions: _questions,
+              )
+            : Result(_totalScore, _resetQuiz),
       ),
     );
   }
